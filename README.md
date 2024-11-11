@@ -80,3 +80,43 @@ Being biased as a Golang programmer, I will try to apply [Google's Golang Readab
 Honestly, the public website Google offers for their Golang styleguide does not look super appealing, but working with consistent code which religiously follows this styleguide can be so appealing.
 
 Having written way over 100k LoC Golang and being recency-biased towards Golang, let's see if Rust can be fun as well.
+
+## Installing Rust
+
+> Wer anderen etwas Rust kompiliert, braucht ein Rustkompiliergerät.
+
+Let's get a rust compiler.
+
+We need a somewhat recent compiler version.
+But fortunately, it looks like rust is now stable enough that we don't need any nightly features.
+That was different when I tried a few years back.
+What a pleasant surprise.
+
+I was looking for some hermetic distribution, which does not mess with my system too much.
+I found that the Linux kernel at the [Rust Quick Start](https://docs.kernel.org/rust/quick-start.html) guide (hidden behind the [kernel.org link](https://mirrors.edge.kernel.org/pub/tools/llvm/rust/)) provides a stand-alone Rust toolchain.
+And this toolchain works to compile the Linux kernel.
+But using a special-built distribution will make our life unnecessarily hard.
+
+Looks like my distribution provides an dpkg `rustc-1.80` package.
+
+```bash
+sudo apt install rustc-1.80 cargo-1.80
+```
+
+Does this work with the [official VS Code extension for rust](https://code.visualstudio.com/docs/languages/rust)?
+Unfortunately not, since this puts `cargo-1.80` in my `$PATH`, but the vscode extension is looking for `cargo` directly, without version suffix:
+
+!["cargo" "--version" failed: No such file or directory (os error 2)](img/no_cargo.png)
+
+
+I don't want a special setup, I want some out of the box experience.
+
+
+```bash
+sudo apt autoremove --purge rustc-1.80 cargo-1.80
+```
+
+But the [official](https://doc.rust-lang.org/beta/book/ch01-01-installation.html) `curl | sh` method is a bit too yolo for me.
+
+**TODO**
+
