@@ -120,4 +120,7 @@ But the [official](https://doc.rust-lang.org/beta/book/ch01-01-installation.html
 
 **TODO**
 
-![booting hello world, but it does not start](img/hello_world_secureboot.mp4)
+<!-- img/hello_world_secureboot.mp4 -->
+<video src="https://github.com/user-attachments/assets/80e30647-7129-43c1-b4b5-95985fba8be7" controls>
+</video>
+
