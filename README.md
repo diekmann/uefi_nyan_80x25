@@ -27,9 +27,8 @@ The existing system probably already solves many problems and corner cases and i
 Maybe not in terms of unit tests, but at least in production.
 Renovating existing code instead of rewriting is often the best option.
 
-**TODO** image:
-simple language Golang vs feature-rich language rust
-effort required to write _simple_ code
+
+![Language expressiveness and feature richness (rust) vs Incentive to write simple and idiomatic code (Golang)](img/rust_golang.png)
 
 And that's why I like Golang for work so much: The simplicity of the language forces simple code, and when that code is written idiomatically, it's rather easy to jump into an existing code base get started.
 In Golang, people often complain about repetition, missing features, and that everything needs to be spelled out explicitly.
