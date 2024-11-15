@@ -141,8 +141,8 @@ Right now, my developer workflow is as follows
 
 1. `cargo build`
 2. Why does it build so much? And why won't it compile with the error `error: unwinding panics are not supported without std`?
-3. Oh, I forgot `--target x86_64-unknown-uefi`.
-4. `cargo clean`
+3. Oh, I forgot `--target x86_64-unknown-uefi`. :angry:
+4. `cargo clean` :unamused:
 5. `cargo build --target x86_64-unknown-uefi`
 6. `cp` the binary to my `qemu` location and run qemu.
 
@@ -199,7 +199,7 @@ qemu-system-x86_64: target/x86_64-unknown-uefi/debug/my-uefi-app.efi: drive with
 ```
 
 It's the same error.
-So we confirmed the hypothesis that `cargo` run adds the path to the compiled binary and qemu does not like this.
+So we confirmed the hypothesis that `cargo run` adds the path to the compiled binary and qemu does not like this.
 So I thought: "Hey, what about adding a dummy flag to qemu at the end which consumes the path added by `cargo run`, but which gets ignored hopefully".
 I tried the `-kernel` flag.
 
@@ -213,7 +213,7 @@ $ qemu-system-x86_64 -enable-kvm -drive if=pflash,format=raw,readonly=on,file=OV
 
 To my surprise, this just booted my UEFI binary directly!
 The `-kernel` flag was supposed to boot a Linux kernel.
-I did not expect that!
+I did not expect that it can start UEFI apps!
 I thought I have to emulate an efi system partition.
 I don't know why this works, but it works.
 Does this have to do with the [unified kernel images](https://wiki.archlinux.org/title/Unified_kernel_image)?
