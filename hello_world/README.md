@@ -1,8 +1,8 @@
 # Hello World
 
-`Hello, World!`, but in [UEFI](https://en.wikipedia.org/wiki/UEFI).
+Let's write an `Hello, World!` app, but in [UEFI](https://en.wikipedia.org/wiki/UEFI).
 
-UEFI is what the kids call the BIOS today.
+UEFI is what the kids call the BIOS nowadays.
 
 My goal is not to replace the UEFI on my laptop, my goal is just to write an UEFI application which can be started from my laptop's stock UEFI boot menu.
 
@@ -86,10 +86,11 @@ The first time when I tested on real hardware, I was already much further down t
 So the error could be anything.
 What did I do wrong with my code?
 I added some `printf` debugging and sleeping, but my messages did not show up on the screen.
-Clearly it must be allocator crate that I had enabled which crashed early, right?
+Clearly it must be the allocator crate that I had enabled which crashed early, right?
 Wrong!
 I took one step back and started over.
-Trying to just boot the minimal Hello, World example we just saw, straight from the book.
+Trying to just boot the minimal Hello, World example we just saw.
+Verbatim copied from the book.
 No custom code from my side.
 
 And reducing this to a minimal example and removing all the moving parts really helped me to take one step back:
@@ -97,17 +98,17 @@ The Hello-World also did not boot!
 Maybe, it's not my code which is crashing at all?
 
 So let's take one step back further.
-What happens when [I select my UEFI app in the boot menu](https://en.wikipedia.org/wiki/UEFI#Booting)?
+What happens when [I select my UEFI app in the boot menu and press enter](https://en.wikipedia.org/wiki/UEFI#Booting)?
 
 1. The firmware did already detect my UEFI binary.
 2. So it just checks the secure boot signature and boots it.
 
 Wait, what?
 Secure boot signature?
-I did not set up any personal Machine Owner Keys and I definitely don't own the private Microsoft signing keys.
+I did not set up any personal [Machine Owner Keys](https://mjg59.dreamwidth.org/19448.html) and I definitely don't own the [private Microsoft signing keys](https://mjg59.dreamwidth.org/5552.html).
 My binary is not signed.
 
-![Meme: This is where I put my signature for secure boot - if i had one](https://i.imgflip.com/9ag5ym.jpg)
+![Meme: This is where I put my signature for secure boot - if I had one](https://i.imgflip.com/9ag5ym.jpg)
 
 Okay, what happens if I turn off secure boot in the BIOS (UEFI?) menu?
 
@@ -121,7 +122,7 @@ It works!
 Okay, not showing any error message at all if the secure boot check fails is not nice.
 Let's create a [quick PR upstream](https://github.com/rust-osdev/uefi-rs/pull/1468) with the Rust UEFI book, so others are spared from this frustration.
 
-And now, let's continue.
+And now that we have `Hello, World` on real hardware, let's continue.
 
 # Hello World! But convenient.
 
