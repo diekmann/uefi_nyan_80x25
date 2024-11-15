@@ -115,6 +115,12 @@ Okay, what happens if I turn off secure boot in the BIOS (UEFI?) menu?
 
 It works!
 
+<video src="https://github.com/user-attachments/assets/f7c139e6-0343-439d-ae5a-8d5cf65c8850" controls>
+</video>
+
+
+
+
 
 # Hello World! But convenient.
 
