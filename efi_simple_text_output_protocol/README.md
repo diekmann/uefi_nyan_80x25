@@ -143,6 +143,91 @@ $ cargo run
 
 Nice!
 
+## Outputting some interesting Strings
+
+UCS-2 is not Unicode.
+And the EFI specification [defines some interesting characters](https://uefi.org/specs/UEFI/2.10/12_Protocols_Console_Support.html#efi-simple-text-output-protocol-outputstring).
+
+Let's see what the following are:
+
+```C
+#define BOXDRAW_HORIZONTAL             0x2500
+...
+#define BOXDRAW_VERTICAL_HORIZONTAL_DOUBLE 0x256a
+...
+#define GEOMETRICSHAPE_UP_TRIANGLE     0x25b2
+```
+
+I could not see if the `cstr16` macro supports escape sequences, so let's build those characters by hand.
+
+```rust
+#![no_main]
+#![no_std]
+
+use log::info;
+use uefi::prelude::*;
+
+const BOXDRAW_HORIZONTAL: uefi::Char16 = unsafe {uefi::Char16::from_u16_unchecked(0x2500 as u16)};
+const BOXDRAW_VERTICAL_HORIZONTAL_DOUBLE: uefi::Char16 = unsafe {uefi::Char16::from_u16_unchecked(0x256a as u16)};
+const GEOMETRICSHAPE_UP_TRIANGLE: uefi::Char16 = unsafe {uefi::Char16::from_u16_unchecked(0x25b2 as u16)};
+
+#[entry]
+fn main() -> Status {
+    uefi::helpers::init().unwrap();
+    info!("Hello world!");
+    system::with_stdout(|stdout| -> uefi::Result{
+        let mut s = uefi::CString16::new();
+        s.push(BOXDRAW_HORIZONTAL);
+        s.push(BOXDRAW_HORIZONTAL);
+        s.push(BOXDRAW_HORIZONTAL);
+        s.push(BOXDRAW_VERTICAL_HORIZONTAL_DOUBLE);
+        s.push(BOXDRAW_VERTICAL_HORIZONTAL_DOUBLE);
+        s.push(BOXDRAW_VERTICAL_HORIZONTAL_DOUBLE);
+        s.push(GEOMETRICSHAPE_UP_TRIANGLE);
+        s.push(GEOMETRICSHAPE_UP_TRIANGLE);
+        s.push(GEOMETRICSHAPE_UP_TRIANGLE);
+        stdout.output_string(&s)?;
+        Ok(())
+    }).expect("talking to EFI Simple Text Output Protocol went wrong");
+    boot::stall(10_000_000);
+    Status::SUCCESS
+}
+```
+
+```bash
+$ cargo run
+   Compiling nyan v0.1.0 (/home/user/git/uefi_nyan_80x25/nyan)
+error[E0433]: failed to resolve: could not find `CString16` in `uefi`
+   --> src/main.rs:17:27
+    |
+17  |         let mut s = uefi::CString16::new();
+    |                           ^^^^^^^^^
+    |                           |
+    |                           could not find `CString16` in `uefi`
+    |                           help: a struct with a similar name exists: `CStr16`
+    |
+note: found an item that was configured out
+   --> /home/user/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uefi-0.33.0/src/lib.rs:259:21
+    |
+259 | pub use data_types::CString16;
+    |                     ^^^^^^^^^
+note: the item is gated behind the `alloc` feature
+   --> /home/user/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uefi-0.33.0/src/lib.rs:258:7
+    |
+258 | #[cfg(feature = "alloc")]
+    |       ^^^^^^^^^^^^^^^^^
+```
+
+WOW.
+This is a really great compiler message.
+So far, we did not use any data structure on the heap.
+To use the heap, we need some memory allocator.
+And we don't have any........ **TODO**
+
+Let's add `"alloc", "global_allocator"` to the `Cargo.toml`.
+
+
+
 need allocator for uefi::CString16::new()
 
 Step 5
