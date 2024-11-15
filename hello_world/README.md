@@ -107,7 +107,7 @@ Secure boot signature?
 I did not set up any personal Machine Owner Keys and I definitely don't own the private Microsoft signing keys.
 My binary is not signed.
 
-![](https://i.imgflip.com/9ag5ym.jpg)
+![Meme: This is where I put my signature for secure boot - if i had one](https://i.imgflip.com/9ag5ym.jpg)
 
 Okay, what happens if I turn off secure boot in the BIOS (UEFI?) menu?
 
@@ -118,9 +118,10 @@ It works!
 <video src="https://github.com/user-attachments/assets/f7c139e6-0343-439d-ae5a-8d5cf65c8850" controls>
 </video>
 
+Okay, not showing any error message at all if the secure boot check fails is not nice.
+Let's create a [quick PR upstream](https://github.com/rust-osdev/uefi-rs/pull/1468) with the Rust UEFI book, so others are spared from this frustration.
 
-
-
+And now, let's continue.
 
 # Hello World! But convenient.
 
