@@ -56,6 +56,17 @@ Let's run is, as described in [the Rust UEFI book](https://rust-osdev.github.io/
 
 ![running Hello, World in qemu](img/qemu.png)
 
+<!--
+By the way, on Ubuntu, I got a copy of an UEFI like this:
+
+
+```bash
+$ sudo apt install ovmf
+$ cp /usr/share/OVMF/OVMF_CODE_4M.fd .
+$ cp /usr/share/OVMF/OVMF_VARS_4M.fd .
+```
+-->
+
 Great!
 
 
@@ -124,19 +135,106 @@ Let's create a [quick PR upstream](https://github.com/rust-osdev/uefi-rs/pull/14
 
 And now that we have `Hello, World` on real hardware, let's continue.
 
-# Hello World! But convenient.
+## Hello World! But convenient
 
+Right now, my developer workflow is as follows
 
+1. `cargo build`
+2. Why does it build so much? And why won't it compile with the error `error: unwinding panics are not supported without std`?
+3. Oh, I forgot `--target x86_64-unknown-uefi`.
+4. `cargo clean`
+5. `cargo build --target x86_64-unknown-uefi`
+6. `cp` the binary to my `qemu` location and run qemu.
 
-And run it, ...
-Let's run in qemu first.
-But we need to get an UEFI image first!
-ovmf, with distro
+I think this can be improved.
+
+First, let's define `--target x86_64-unknown-uefi` as the default.
+I found that this can be specified in the local `.cargo/config.toml`: 
+
+```toml
+[build]
+target = "x86_64-unknown-uefi"
+```
+
+Now, running `cargo build` does the right thing.
+
+Can this be more convenient? Can we just run `cargo run`?
 
 ```bash
-$ sudo apt install ovmf
+$ cargo run 
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running `target/x86_64-unknown-uefi/debug/my-uefi-app.efi`
+target/x86_64-unknown-uefi/debug/my-uefi-app.efi: 3: Syntax error: "(" unexpected (expecting ")")
 ```
 
+Well, no, UEFI apps don't run natively under Linux, we need to start them in qemu.
+Fortunately, the `.cargo/config.toml` has the feature to specify [target runners](https://doc.rust-lang.org/cargo/reference/config.html#target).
+
+
+So, with `esp` being my local folder which I pretend to be the efi system partition, let's try the following `.cargo/config.toml`:
+
+```toml
+[build]
+target = "x86_64-unknown-uefi"
+
+[target.x86_64-unknown-uefi]
+runner = "qemu-system-x86_64 -enable-kvm -drive if=pflash,format=raw,readonly=on,file=OVMF_CODE.fd -drive if=pflash,format=raw,readonly=on,file=OVMF_VARS.fd -drive format=raw,file=fat:rw:esp"
 ```
-$ cp /usr/share/OVMF/OVMF_CODE_4M.fd .
+
+```bash
+$ cargo run
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running `qemu-system-x86_64 -enable-kvm -drive if=pflash,format=raw,readonly=on,file=OVMF_CODE.fd -drive if=pflash,format=raw,readonly=on,file=OVMF_VARS.fd -drive 'format=raw,file=fat:rw:esp' target/x86_64-unknown-uefi/debug/my-uefi-app.efi`
+qemu-system-x86_64: target/x86_64-unknown-uefi/debug/my-uefi-app.efi: drive with bus=0, unit=0 (index=0) exists
 ```
+
+What a strange error message.
+What does it mean?
+Looks like `cargo run` appends the name of the compiled binary to the runner?
+Can we reproduce this error message?
+
+```bash
+$ qemu-system-x86_64 -drive 'format=raw,file=fat:rw:esp' target/x86_64-unknown-uefi/debug/my-uefi-app.efi
+qemu-system-x86_64: target/x86_64-unknown-uefi/debug/my-uefi-app.efi: drive with bus=0, unit=0 (index=0) exists
+```
+
+It's the same error.
+So we confirmed the hypothesis that `cargo` run adds the path to the compiled binary and qemu does not like this.
+So I thought: "Hey, what about adding a dummy flag to qemu at the end which consumes the path added by `cargo run`, but which gets ignored hopefully".
+I tried the `-kernel` flag.
+
+```bash
+$ qemu-system-x86_64 -enable-kvm -drive if=pflash,format=raw,readonly=on,file=OVMF_CODE.fd -drive if=pflash,format=raw,readonly=on,file=OVMF_VARS.fd -kernel target/x86_64-unknown-uefi/debug/my-uefi-app.efi
+```
+
+![Hello World is shown](img/accidental_hello_world.png)
+
+:astonished:
+
+To my surprise, this just booted my UEFI binary directly!
+The `-kernel` flag was supposed to boot a Linux kernel.
+I did not expect that!
+I thought I have to emulate an efi system partition.
+I don't know why this works, but it works.
+Does this have to do with the [unified kernel images](https://wiki.archlinux.org/title/Unified_kernel_image)?
+Anyway, it works!
+
+In addition, I found that uefi-rs likes to write `panic`s to the serial console.
+So let's enable one in qemu.
+
+Eventually, my `.cargo/config.toml` looks like this:
+
+```toml
+[build]
+target = "x86_64-unknown-uefi"
+
+[target.x86_64-unknown-uefi]
+runner = "qemu-system-x86_64 -enable-kvm -drive if=pflash,format=raw,readonly=on,file=OVMF_CODE_4M.fd -drive if=pflash,format=raw,readonly=on,file=OVMF_VARS_4M.fd -serial stdio -kernel"
+```
+
+And this allows to just type `cargo run`, which now compiles the UEFI binary and runs it in qemu.
+
+Now we have a convenient development setup and can get started! :crab:
+
+[back](../)
+
