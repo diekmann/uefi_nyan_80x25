@@ -410,13 +410,22 @@ fn main() -> Status {
 
 ![QEMU: supported mode 0: 80 25; supported mode 2: 100 31; and colors](img/bluebg80x25qemu.jpg)
 
+
 So qemu OVMF only supports mode 80x25 and 100x31.
+By the way, the "empty" line after the line with black `X`es is blue `X`es on blue background.
+
 What does my Thinkpad support?
 
-Resolution different, ...
-Set mode!
+![Thinkpad X260 supported modes: 80x25, 240x56, 100x31, 128x40, 160x53](img/bluebg80x25x260.jpg)
+
+My Thinkpad supports a few more modes.
+But 80x25 is the one everyone *must* support.
+
+I really like the blue background.
 
 ## Outputting some interesting colorful Strings
+
+**TODO**
 
 Getting close towards painting.
 
