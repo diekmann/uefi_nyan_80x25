@@ -9,6 +9,7 @@ In UEFI land, the string encoding is [UCS-2](https://en.wikipedia.org/wiki/Unive
 
 To ask UEFI to do something, each UEFI app is basically passed a pointer to the [`EFI_SYSTEM_TABLE`](https://uefi.org/specs/UEFI/2.10/04_EFI_System_Table.html?highlight=efi_system_tabl#efi-system-table) in the `main` function.
 This `EFI_SYSTEM_TABLE` is full of pointers to all the services provided by UEFI.
+UEFI calls these services [Boot Services](https://uefi.org/specs/UEFI/2.10/07_Services_Boot_Services.html).
 One of these services is the `EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL`.
 
 About 5 years ago, I [experimented with a minimal and raw UEFI application](https://github.com/diekmann/uefi_playground/tree/master) —a C and Rust hybrid— to just print "Hello, World" from scratch.
@@ -221,14 +222,38 @@ note: the item is gated behind the `alloc` feature
 WOW.
 This is a really great compiler message.
 So far, we did not use any data structure on the heap.
+Everything was on the stack.
+But `uefi::CString16` is a dynamically-sized data structure (and we are `push`ing to it quite extensively).
+A `uefi::CString16` lives on the heap.
 To use the heap, we need some memory allocator.
-And we don't have any........ **TODO**
+But all the memory belongs to UEFI.
+Fortunately, there is an UEFI service to [allocate memory](https://uefi.org/specs/UEFI/2.10/07_Services_Boot_Services.html#memory-allocation-services).
 
-Let's add `"alloc", "global_allocator"` to the `Cargo.toml`.
+More fortunately, the `uefi` crate already allows using the UEFI memory allocator seamlessly.
+Let's add `"alloc"` and `"global_allocator"` to our `uefi` `features` in the `Cargo.toml`"
+
+```toml
+[package]
+name = "nyan"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+log = "0.4.22"
+uefi = { version = "0.33.0", features = ["alloc", "global_allocator", "logger", "panic_handler"] }
+
+```
+
+```bash
+$ cargo run
+```
+
+![qemu showing ───╪╪╪▲▲▲](img/ucs2symbols.png)
 
 
+Nice!
 
-need allocator for uefi::CString16::new()
+
 
 Step 5
 Intro UEFI simple output proto.
