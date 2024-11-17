@@ -255,7 +255,7 @@ Nice!
 
 ## Outputting some colorful Strings
 
-The EFI Simple Text Output Protocol also [supports colors](EFI Simple Text Output Protocol).
+The EFI Simple Text Output Protocol also [supports colors](https://uefi.org/specs/UEFI/2.10/12_Protocols_Console_Support.html#efi-simple-text-output-protocol-setattribute).
 In total, it supports 16 colors, half of them can be used as background.
 And the Rust `uefi` crate also [supports those colors](https://docs.rs/uefi/latest/uefi/proto/console/text/enum.Color.html).
 
@@ -407,6 +407,8 @@ fn main() -> Status {
     Status::SUCCESS
 }
 ```
+
+Hardcoding 80 `X`es per color without a newline verifies that the screen is now indeed 80 columns wide.
 
 ![QEMU: supported mode 0: 80 25; supported mode 2: 100 31; and colors](img/bluebg80x25qemu.jpg)
 
