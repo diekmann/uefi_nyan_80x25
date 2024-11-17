@@ -253,13 +253,80 @@ $ cargo run
 
 Nice!
 
+## Outputting some colorful Strings
+
+The EFI Simple Text Output Protocol also [supports colors](EFI Simple Text Output Protocol).
+In total, it supports 16 colors, half of them can be used as background.
+And the Rust `uefi` crate also [supports those colors](https://docs.rs/uefi/latest/uefi/proto/console/text/enum.Color.html).
+
+Let's look at some colors:
+
+```rust
+#![no_main]
+#![no_std]
+
+use core::fmt::Write;
+
+use uefi::prelude::*;
+use uefi::proto::console::text::Color::*;
+
+#[entry]
+fn main() -> Status {
+    uefi::helpers::init().unwrap();
+    let colors = [
+        Black,
+        Blue,
+        Green,
+        Cyan,
+        Red,
+        Magenta,
+        Brown,
+        LightGray,
+        DarkGray,
+        LightBlue,
+        LightGreen,
+        LightCyan,
+        LightRed,
+        LightMagenta,
+        Yellow,
+        White,
+    ];
+    system::with_stdout(|stdout| -> uefi::Result {
+        for background in colors {
+            for color in colors {
+                stdout.set_color(color, background)?;
+                stdout.output_string(cstr16!("XXX"))?;
+            }
+            stdout.write_char('\n').unwrap(); // core::fmt::Error, not uefi::Error
+        }
+        Ok(())
+    }).expect("talking to EFI Simple Text Output Protocol went wrong");
+    boot::stall(10_000_000);
+    Status::SUCCESS
+}
+```
+
+The `write_char` function is not from `uefi`, but from `core::fmt::Write`.
+It returns a different error.
+That's why I cannot handle errors with `?`.
+But I'm too lazy to create yet another `cstr16` and use the UEFI raw Text Output Protocol just to print a newline.
 
 
-Step 5
-Intro UEFI simple output proto.
-Few colors. BU so has Nyan. Perfect match.
+```bash
+$ cargo run
+```
 
-HELLO WORLD, in color
+![XXX shown in all 16 UEFI colors, with 8 different background colors before it panics when the 9th background color is attempted with "An invalid background color was requested".](img/colors.png)
+
+Some observations
+
+* The colors do look nice.
+* The blue background looks nice, which is perfect for nyan cat.
+* There are not many colors, which is good enough for nyan cat.
+* UEFI really insists that only the first eight colors can be used as background colors.
+
+## Outputting some interesting colorful Strings
+
 
 Find the interesting characters in the docs.
 
