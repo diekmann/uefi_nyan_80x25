@@ -325,8 +325,103 @@ Some observations
 * There are not many colors, which is good enough for nyan cat.
 * UEFI really insists that only the first eight colors can be used as background colors.
 
+How does this look on real hardware?
+
+![same as above, but on my Thinkpad X260](img/colors_x260.jpg)
+
+Nice!
+
+## Mode 80x25
+
+I notice that the resolution on my Thinkpad is quite different, compared to qemu.
+Looks like we could fit more characters on a line on my Thinkpad than we could fit on a line on qemu.
+
+Turns out the UEFI Simple Text Output Protocol supports different [modes](https://uefi.org/specs/UEFI/2.10/12_Protocols_Console_Support.html#efi-simple-text-output-protocol-querymode).
+
+For now, I don't want to support different ~~resolutions~~ modes.
+Is there one mode everyone must support?
+The [docs](https://uefi.org/specs/UEFI/2.10/12_Protocols_Console_Support.html#efi-simple-text-output-protocol-querymode) say
+
+> It is required that all output devices support at least 80x25 text mode.
+
+Great!
+How do I select this mode?
+
+> This mode is defined to be mode 0
+
+Great!
+Let's first set our screen to 80x25 then.
+Good old vintage terminal vibes ahead.
+
+```rust
+#![no_main]
+#![no_std]
+
+use log::info;
+use uefi::prelude::*;
+use uefi::proto::console::text::Color::*;
+
+#[entry]
+fn main() -> Status {
+    uefi::helpers::init().unwrap();
+    let colors = [
+        Black,
+        Blue,
+        Green,
+        Cyan,
+        Red,
+        Magenta,
+        Brown,
+        LightGray,
+        DarkGray,
+        LightBlue,
+        LightGreen,
+        LightCyan,
+        LightRed,
+        LightMagenta,
+        Yellow,
+        White,
+    ];
+    let background = Blue;
+    system::with_stdout(|stdout| -> uefi::Result {
+        let must_mode_80x25 = stdout.modes().next().unwrap(); // the first one must be the 80x25 mode.
+        stdout.set_mode(must_mode_80x25)?;
+
+        // This seems to paint the whole background blue.
+        stdout.set_color(Black, background)?;
+        stdout.clear()?;
+
+        // Dump all modes.
+        for m in stdout.modes() {
+            info!("supported mode {}: {} {}", m.index(), m.columns(), m.rows());
+        }
+        
+        for color in colors {
+            stdout.set_color(color, background)?;
+            // 80 times X. No newline required, since the mode automatically starts a new line after 80 chars.
+            stdout.output_string(cstr16!("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"))?;
+        }
+        Ok(())
+    }).expect("talking to EFI Simple Text Output Protocol went wrong");
+    boot::stall(10_000_000);
+    Status::SUCCESS
+}
+```
+
+![QEMU: supported mode 0: 80 25; supported mode 2: 100 31; and colors](img/bluebg80x25qemu.jpg)
+
+So qemu OVMF only supports mode 80x25 and 100x31.
+What does my Thinkpad support?
+
+Resolution different, ...
+Set mode!
+
 ## Outputting some interesting colorful Strings
 
+Getting close towards painting.
+
+The full wide range of colors is only available for foreground.
+Which character?
 
 Find the interesting characters in the docs.
 
