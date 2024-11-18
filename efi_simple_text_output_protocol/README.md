@@ -427,25 +427,90 @@ I really like the blue background.
 
 ## Outputting some interesting colorful Strings
 
-**TODO**
+We are getting close towards painting nyan cat. :cat:
 
-Getting close towards painting.
+We see that the full wide range of colors, lol, is only available for foreground characters.
+So we cannot e.g., draw a space ` ` and rely on the background color to fill that spot.
+There are too few background colors, and they are not bright enough IMHO.
+So, how do we draw nyan cat?
+Probably not in ASCII art, because the background would shine through.
 
-The full wide range of colors is only available for foreground.
-Which character?
+UEFI UCS-2 provides something interesting
 
-Find the interesting characters in the docs.
+```C
+//******************************************************
+// EFI Required Block Elements Code Chart
+//******************************************************
 
-Color test
-On real hardware
-Photo 
-Like blue background.
+#define BLOCKELEMENT_FULL_BLOCK        0x2588
+#define BLOCKELEMENT_LIGHT_SHADE       0x2591
+```
 
+The `BLOCKELEMENT_FULL_BLOCK` is what we want.
 
-Step 6
-Standardize on graphics mode. Qemu comes up with?
-Thinkpad comes up with?
+```rust
+#![no_main]
+#![no_std]
 
+use log::info;
+use uefi::prelude::*;
+use uefi::proto::console::text::Color::*;
 
+const BLOCKELEMENT_FULL_BLOCK: uefi::Char16 = unsafe {uefi::Char16::from_u16_unchecked(0x2588 as u16)};
+
+#[entry]
+fn main() -> Status {
+    uefi::helpers::init().unwrap();
+    let colors = [
+        Black,
+        Blue,
+        Green,
+        Cyan,
+        Red,
+        Magenta,
+        Brown,
+        LightGray,
+        DarkGray,
+        LightBlue,
+        LightGreen,
+        LightCyan,
+        LightRed,
+        LightMagenta,
+        Yellow,
+        White,
+    ];
+    let background = Blue;
+    system::with_stdout(|stdout| -> uefi::Result {
+        let must_mode_80x25 = stdout.modes().next().unwrap(); // the first one must be the 80x25 mode.
+        stdout.set_mode(must_mode_80x25)?;
+
+        // Paints the whole background blue. This is even a documented feature of `set_color`+`clear`.
+        stdout.set_color(Black, background)?;
+        stdout.clear()?;
+
+        // Dump all modes.
+        for m in stdout.modes() {
+            info!("supported mode {}: {} {}", m.index(), m.columns(), m.rows());
+        }
+        
+        for color in colors {
+            stdout.set_color(color, background)?;
+            let mut s = uefi::CString16::new();
+            for _ in 0..80 {
+                s.push(BLOCKELEMENT_FULL_BLOCK);
+            }
+            stdout.output_string(&s)?;
+        }
+        Ok(())
+    }).expect("talking to EFI Simple Text Output Protocol went wrong");
+    boot::stall(10_000_000);
+    Status::SUCCESS
+}
+```
+
+![same as above, but with BLOCKELEMENT_FULL_BLOCK character](img/blockelement.png)
+
+Nice!
+We are now ready to draw nyan cat in the next step. :cat: :crab:
 
 [back](../)

@@ -5,6 +5,8 @@ use log::info;
 use uefi::prelude::*;
 use uefi::proto::console::text::Color::*;
 
+const BLOCKELEMENT_FULL_BLOCK: uefi::Char16 = unsafe {uefi::Char16::from_u16_unchecked(0x2588 as u16)};
+
 #[entry]
 fn main() -> Status {
     uefi::helpers::init().unwrap();
@@ -42,8 +44,11 @@ fn main() -> Status {
         
         for color in colors {
             stdout.set_color(color, background)?;
-            // 80 times X. No newline required, since the mode automatically starts a new line after 80 chars.
-            stdout.output_string(cstr16!("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"))?;
+            let mut s = uefi::CString16::new();
+            for _ in 0..80 {
+                s.push(BLOCKELEMENT_FULL_BLOCK);
+            }
+            stdout.output_string(&s)?;
         }
         Ok(())
     }).expect("talking to EFI Simple Text Output Protocol went wrong");
