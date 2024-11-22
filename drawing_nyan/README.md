@@ -251,7 +251,7 @@ Look at the following example:
 ```
 
 We can directly see the nesting level of each paragraph.  
-If we want to extract everything at a specific nesting level, we just need to count filter by the amount of leading whitespaces.
+If we want to extract everything at a specific nesting level, we just need to filter by the amount of leading whitespaces.
 A simple exercise in a regex.
 The number of whitespaces is basically a count to which nested block the current block belongs.
 Essentially, the whitespaces correspond to the persisted stack memory of a pushdown automaton (the next powerful thing after a regex in the [Chomsky hierarchy](https://en.wikipedia.org/wiki/Chomsky_hierarchy)).
