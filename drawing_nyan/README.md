@@ -110,7 +110,23 @@ Well, I just want to export nyan cat, maybe there is a simpler solution?
 We don't care about efficiency.
 Some self-documenting file format?
 
+ASCII art?
 
+```raw                    
+     ]#########[    
+    ]#XXX2XYSX##    
+    ]ZoXXXr_/2XX _, 
+    ]ZXXXX[o2]SX)o( 
+ _, ]ZSXSu(nns__Sn( 
+ "s_]ZXuX2)vq{oXq{n 
+   "]ZuXXX)ns)oss)S 
+    ]ZXX2X)oo{o{}oX 
+    ]#oXXXs"o__s_r' 
+   v,"!!!!!!   _    
+   n' _     _  v    
+```
+
+No, I want colors!
 
 
 [back](../)
