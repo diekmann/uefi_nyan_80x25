@@ -137,6 +137,7 @@ That would be perfect!
 
 No luck for me?
 It really looks like obscure rarely-used file formats are not super well supported?
+Better call captain obvious for help?
 
 By the way, I re-tried all those things a few times with Gimp versions around 2.10.38 and 3.0
 
@@ -144,6 +145,7 @@ Okay, why would an HTML table exporter fall over?
 Transparency?
 Animation frames?
 Multiple layers?
+All of the above?
 
 Let's get rid of all those snares.
 Let's copy the first frame into a blank new canvas with blue background.
@@ -173,5 +175,95 @@ A file [nyan.html](img/nyan.html) was created.
 Awesome! :heart_eyes_cat:
 
 This really looks like it was meant to be rendered by UEFI UCS-2 `BLOCKELEMENT_FULL_BLOCK`.
+
+### Converting HTML Nyan Cat to Rust Vector
+
+The [generated HTML file](img/nyan.html) really looks simple.
+
+```bash
+$ cat nyan.html | head -n20
+<HTML>
+<HEAD><TITLE>/home/user/git/uefi_nyan_80x25/drawing_nyan/img/nyan.html</TITLE></HEAD>
+<BODY>
+<H1>/home/user/git/uefi_nyan_80x25/drawing_nyan/img/nyan.html</H1>
+<TABLE BORDER=2 CELLPADDING=4 CELLSPACING=0>
+   <TR>
+      <TD  BGCOLOR=#0200ff>
+      &nbsp;
+      </TD>
+      <TD  BGCOLOR=#0200ff>
+      &nbsp;
+      </TD>
+      <TD  BGCOLOR=#0200ff>
+      &nbsp;
+      </TD>
+      <TD  BGCOLOR=#0200ff>
+      &nbsp;
+      </TD>
+      <TD  BGCOLOR=#0200ff>
+      &nbsp;
+```
+
+How many colors are in there?
+
+```shell
+$ grep '<TD \+BGCOLOR' nyan.html | sort | uniq
+      <TD  BGCOLOR=#000000>
+      <TD  BGCOLOR=#0200ff>
+      <TD  BGCOLOR=#999999>
+      <TD  BGCOLOR=#ff3399>
+      <TD  BGCOLOR=#ff9999>
+      <TD  BGCOLOR=#ff99ff>
+      <TD  BGCOLOR=#ffcc99>
+      <TD  BGCOLOR=#ffffff>
+```
+
+Only 8 colors?
+That's perfect!
+
+Let's parse that HTML file.
+Probably using a regex is fine to parse HTML?
+What does [stackoverflow say about this](https://stackoverflow.com/a/1732454)?
+Yes, this link points to the epic answer that HTML is not a regular language, thus, a regular expression is the wrong tool.
+And that is a great answer.
+But did you notice the shell command above where we counted the colors?
+`grep '<TD \+BGCOLOR' nyan.html`.
+We _did_ just parse HTML with a regex!
+
+Our HTML is well-formatted and trusted!
+Often, we can parse many non-regular languages with a regex, _when the language was properly formatted beforehand_.
+Look at the following example:
+
+```html
+<p>
+   level 1
+   <p>
+      level 2
+      <p>
+         level 3
+      </p>
+   </p>
+   <p>
+      level 2 again
+   </p>
+   level 1 again
+</p>
+```
+
+We can directly see the nesting level of each paragraph.  
+If we want to extract everything at a specific nesting level, we just need to count filter by the amount of leading whitespaces.
+A simple exercise in a regex.
+The number of whitespaces is basically a count to which nested block the current block belongs.
+Essentially, the whitespaces correspond to the stack memory of a pushdown automaton (the next powerful thing after a regex in the [Chomsky hierarchy](https://en.wikipedia.org/wiki/Chomsky_hierarchy)).
+
+When working in larger code bases and doing a large-scale-change, often, well-formatting the target files and then going yolo and parsing with a regex can be very efficient.
+Some people may get horrified by that approach, but, given we have the well-formatted part under control, it's super efficient and can be quite safe when done with proper care.
+
+![normal distribution meme where left and right parse HTML with a regex while the majority claims that HTML is not regular. Created via https://imgflip.com/i/9bc045](img/not_regular_normal_meme.jpg)
+
+Again, given we have the well-formatted part under control!
+
+
+
 
 [back](../)
