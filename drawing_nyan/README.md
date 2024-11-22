@@ -59,6 +59,8 @@ Purrrfect! :cat:
 
 ## Nyan to Vec
 
+### Exporting Nyan Cat
+
 We want to turn this picture into a Rust vector of UEFI colors.
 So we somehow want to export this into an uncompressed binary list of colors.
 
@@ -128,5 +130,48 @@ ASCII art?
 
 No, I want colors!
 
+Scrolling through the supported file type, I see HTML table.
+That would be perfect!
+
+![Gimp crashing](img/gimp_crash.png)
+
+No luck for me?
+It really looks like obscure rarely-used file formats are not super well supported?
+
+By the way, I re-tried all those things a few times with Gimp versions around 2.10.38 and 3.0
+
+Okay, why would an HTML table exporter fall over?
+Transparency?
+Animation frames?
+Multiple layers?
+
+Let's get rid of all those snares.
+Let's copy the first frame into a blank new canvas with blue background.
+
+![nyan cat in gimp with simplifications](img/gimp_simplified.png)
+
+Then export as HTML table.
+Starting from Gimp 3, it looks like selecting `HTML table` explicitly is required, since normal HTML export creates more fancy exports.
+Too fancy for UCS-2.
+
+![Gimp select file type HTML table](img/gimp_select_htmltable.png)
+
+![Gimp warning about file extension not matching chosen file type](img/gimp_warn.png)
+
+Whatever.
+Probably the two types of Gimp HTML exports compete?
+Whatever.
+
+![Gimp Export Image as HTML Table](img/gimp_export_html.png)
+
+Looks good.
+
+A file [nyan.html](img/nyan.html) was created.
+
+![nyan cat rendered in an HTML table in the browser](img/nyan_browser.png)
+
+Awesome! :heart_eyes_cat:
+
+This really looks like it was meant to be rendered by UEFI UCS-2 `BLOCKELEMENT_FULL_BLOCK`.
 
 [back](../)
