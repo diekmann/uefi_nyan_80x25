@@ -262,6 +262,7 @@ Some people may get horrified by that approach, but, given we have the well-form
 ![normal distribution meme where left and right parse HTML with a regex while the majority claims that HTML is not regular. Created via https://imgflip.com/i/9bc045](img/not_regular_normal_meme.jpg)
 
 Again, given we have the well-formatted part under control!
+And we definitely have that here with the Gimp HTML export on my machine.
 
 
 
