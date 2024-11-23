@@ -264,7 +264,124 @@ Some people may get horrified by that approach, but, given we have the well-form
 Again, given we have the well-formatted part under control!
 And we definitely have that here with the Gimp HTML export on my machine.
 
+### Nyan HTML to Rust Array
 
+Let's create a new Rust module `nyan.rs`.
 
+```rust
+use uefi::proto::console::text::Color::*;
+
+pub const NYAN_40X25: [Color; 40*25] = [...]
+```
+
+Now we need to fill the `NYAN_40X25` with the Simple Text Output Protocol `uefi::proto::console::text::Color`s.
+
+Do we need explicit memory management, type safety, the ability to scale a project and work in larger teams?
+No?
+Then let's quickly hack that in python.
+I love python!
+But don't let the project become large.
+
+```python
+#!/usr/bin/env python3
+
+import re
+
+def parsecolor(line: str) -> str:
+    m = re.match(r'.*<TD +BGCOLOR=#(?P<rgb>[0-9a-f]*)>.*', line)
+    if not m:
+        raise Exception(f"did not parse: {line}")
+    return m['rgb']
+
+assert(parsecolor('<TD  BGCOLOR=#aabbcc>') == 'aabbcc')
+
+with open('img/nyan.html', 'r') as f:
+    lines = f.readlines()
+
+html = [parsecolor(line) for line in lines if 'BGCOLOR' in line]
+
+translate = {
+    '000000': 'Black',
+    '0200ff': 'Blue',
+    'ff99ff': 'LightMagenta',
+    '999999': 'LightGray',
+    'ffcc99': 'Brown',
+    'ff9999': 'LightRed',
+    'ff3399': 'Magenta',
+    'ffffff': 'White'
+}
+
+print(", ".join([translate[rgb] for rgb in html]))
+```
+
+And here it is, `nyan.rs`:
+
+```rust
+use uefi::proto::console::text::Color;
+use uefi::proto::console::text::Color::*;
+
+pub const NYAN_40X25: [Color; 40*25] = [Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Black, Black, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Black, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Black, Black, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Black, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Black, Brown, Brown, Brown, Brown, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, Brown, Brown, Brown, Brown, Black, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Black, Brown, Brown, Brown, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, Magenta, LightMagenta, LightMagenta, Magenta, Magenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, Brown, Brown, Black, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Black, Brown, Brown, LightMagenta, LightMagenta, Magenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, Black, Black, Black, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, Brown, Black, Blue, Black, Black, Black, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Black, Brown, Brown, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, Black, LightGray, LightGray, LightGray, Black, LightMagenta, Magenta, LightMagenta, LightMagenta, LightMagenta, Brown, Black, Black, LightGray, LightGray, LightGray, Black, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Black, Brown, Brown, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, Black, LightGray, LightGray, LightGray, LightGray, Black, LightMagenta, LightMagenta, LightMagenta, LightMagenta, Brown, Black, LightGray, LightGray, LightGray, LightGray, Black, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Black, Brown, Brown, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, Black, LightGray, LightGray, LightGray, LightGray, Black, LightMagenta, LightMagenta, LightMagenta, LightMagenta, Brown, Black, LightGray, LightGray, LightGray, LightGray, Black, Blue, Blue, Blue, Blue, Black, Black, Black, Blue, Blue, Blue, Black, Brown, Brown, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, Magenta, LightMagenta, LightMagenta, Black, LightGray, LightGray, LightGray, LightGray, LightGray, Black, Black, Black, Black, Black, LightGray, LightGray, LightGray, LightGray, LightGray, Black, Blue, Blue, Blue, Black, LightGray, LightGray, LightGray, Black, Blue, Blue, Black, Brown, Brown, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, Black, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, Black, Blue, Blue, Blue, Black, LightGray, LightGray, LightGray, Black, Black, Black, Black, Brown, Brown, LightMagenta, LightMagenta, LightMagenta, Magenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, Black, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, Black, Blue, Blue, Blue, Black, Black, LightGray, LightGray, LightGray, LightGray, Black, Brown, Brown, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, Magenta, Black, LightGray, LightGray, LightGray, LightGray, White, Black, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, White, Black, LightGray, LightGray, LightGray, Black, Blue, Blue, Blue, Blue, Blue, Black, Black, LightGray, LightGray, Black, Brown, Brown, LightMagenta, Magenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, Black, LightGray, LightGray, LightGray, LightGray, Black, Black, LightGray, LightGray, LightGray, LightGray, Black, LightGray, Black, Black, LightGray, LightGray, LightGray, Black, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Black, Black, Black, Brown, Brown, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, Black, LightGray, LightRed, LightRed, LightRed, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightRed, LightRed, LightRed, Black, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Black, Black, Black, Brown, Brown, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, Black, LightGray, LightRed, LightRed, LightRed, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightRed, LightRed, LightRed, Black, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Black, Brown, Brown, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, Magenta, LightMagenta, LightMagenta, Black, LightGray, LightRed, LightRed, LightRed, LightGray, Black, LightGray, LightGray, LightGray, Black, LightGray, LightGray, Black, LightGray, LightRed, LightRed, LightRed, Black, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Black, Brown, Brown, Brown, LightMagenta, Magenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, Black, LightGray, LightGray, LightGray, LightGray, Black, Black, Black, Black, Black, Black, Black, Black, LightGray, LightGray, LightGray, Black, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Black, Black, Brown, Brown, Brown, Brown, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, LightMagenta, Black, Black, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, LightGray, Black, Black, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Black, LightGray, Black, Black, Black, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Brown, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Black, LightGray, LightGray, LightGray, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, LightGray, Black, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Black, LightGray, LightGray, LightGray, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, Black, LightGray, Black, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Black, LightGray, LightGray, Black, Blue, Blue, Black, LightGray, LightGray, Black, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Black, Black, LightGray, LightGray, Black, Blue, Black, Black, LightGray, LightGray, Black, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Black, Black, Black, Blue, Blue, Blue, Black, Black, Black, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Black, Black, Black, Black, Blue, Blue, Blue, Blue, Black, Black, Black, Blue, Blue, Blue, Blue, Blue, Blue, Blue];
+```
+
+Technically, the file `nyan.rs` is still the original nyan cat?
+So, technically, all rights reserved by prguitarman?
+[IANAL](https://en.wikipedia.org/wiki/IANAL).
+
+## Drawing the `NYAN_40X25` Array.
+
+Let'd draw the array!
+Our simple program from the previous chapter is almost ready, let's adapt it.
+
+```rust
+#![no_main]
+#![no_std]
+
+use log::info;
+use uefi::prelude::*;
+use uefi::proto::console::text::Color::{Blue,Black};
+
+mod nyan;
+
+const BLOCKELEMENT_FULL_BLOCK: uefi::Char16 = unsafe {uefi::Char16::from_u16_unchecked(0x2588 as u16)};
+
+#[entry]
+fn main() -> Status {
+    uefi::helpers::init().unwrap();
+    let background = Blue;
+    system::with_stdout(|stdout| -> uefi::Result {
+        let must_mode_80x25 = stdout.modes().next().unwrap(); // the first one must be the 80x25 mode.
+        stdout.set_mode(must_mode_80x25)?;
+
+        // Paints the whole background blue. This is even a documented feature of `set_color`+`clear`.
+        stdout.set_color(Black, background)?;
+        stdout.clear()?;
+
+        // Dump all modes.
+        for m in stdout.modes() {
+            info!("supported mode {}: {} {}", m.index(), m.columns(), m.rows());
+        }
+        
+        for color in nyan::NYAN_40X25 {
+            stdout.set_color(color, background)?;
+            let mut s = uefi::CString16::new();
+            s.push(BLOCKELEMENT_FULL_BLOCK);
+            stdout.output_string(&s)?;
+        }
+        Ok(())
+    }).expect("talking to EFI Simple Text Output Protocol went wrong");
+    boot::stall(10_000_000);
+    Status::SUCCESS
+}
+```
+
+```bash
+$ cargo run
+```
+
+![qemu showing two nyan cats](img/twonyan.png)
+
+Wait?
+Why are there two nyan cats?
+Am I drunk?
 
 [back](../)
