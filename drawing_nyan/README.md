@@ -330,7 +330,7 @@ So, technically, all rights reserved by prguitarman?
 ## Drawing the `NYAN_40X25` Array.
 
 Let'd draw the array!
-Our simple program from the previous chapter is almost ready, let's adapt it.
+Our simple program from the previous chapter is almost ready, [let's adapt it](https://github.com/diekmann/uefi_nyan_80x25/commit/e79bb0f93f2a5cb52ade54a5b478a8a76b95337f#diff-8604ed4b2e74eddb20dce286c605a4cfb983f26421d5efb8c730b277e5dc62c2).
 
 ```rust
 #![no_main]
