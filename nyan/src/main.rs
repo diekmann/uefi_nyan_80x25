@@ -8,6 +8,7 @@ use uefi::proto::console::text::Color::{Blue,Black};
 mod nyan;
 
 const BLOCKELEMENT_FULL_BLOCK: uefi::Char16 = unsafe {uefi::Char16::from_u16_unchecked(0x2588 as u16)};
+const CARRIAGE_RET: uefi::Char16 = unsafe { uefi::Char16::from_u16_unchecked(b'\r' as u16) };
 const NEWLINE: uefi::Char16 = unsafe { uefi::Char16::from_u16_unchecked(b'\n' as u16) };
 
 #[entry]
@@ -32,6 +33,7 @@ fn main() -> Status {
             let mut s = uefi::CString16::new();
             s.push(BLOCKELEMENT_FULL_BLOCK);
             if i%40 == 0 {
+                s.push(CARRIAGE_RET);
                 s.push(NEWLINE);
             }
             stdout.output_string(&s)?;
