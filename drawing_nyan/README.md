@@ -1,6 +1,6 @@
-# Nyan Cat
+# Nyan Cat to Rust Array
 
-It's time to draw nyan cat in 80x25 UEFI UCS-2 `BLOCKELEMENT_FULL_BLOCK`s.
+It's time to convert nyan cat into 80x25 UEFI UCS-2 `BLOCKELEMENT_FULL_BLOCK`s.
 
 ## Getting Nyan Cat
 
