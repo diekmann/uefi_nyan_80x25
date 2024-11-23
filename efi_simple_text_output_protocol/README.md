@@ -513,4 +513,4 @@ fn main() -> Status {
 Nice!
 We are now ready to draw nyan cat in the next step. :cat: :crab:
 
-[back](../)
+[back](../) | [next](../drawing_nyan/)

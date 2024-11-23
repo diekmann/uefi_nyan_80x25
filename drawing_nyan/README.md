@@ -329,4 +329,4 @@ So, technically, all rights reserved by prguitarman?
 
 We are now ready to draw nyan cat in UCS-2 colors. :cat:
 
-[back](../)
+[back](../) | [next](../putting_together/)

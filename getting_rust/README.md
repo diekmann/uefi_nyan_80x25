@@ -151,4 +151,4 @@ rustc 1.82.0 (f6e511eec 2024-10-15)
 
 Now we are ready, let's get started! :crab:
 
-[back](../)
+[back](../) | [next](../hello_world/)

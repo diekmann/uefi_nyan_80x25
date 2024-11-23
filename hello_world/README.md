@@ -236,4 +236,4 @@ And this allows to just type `cargo run`, which now compiles the UEFI binary and
 
 Now we have a convenient development setup and can get started! :crab:
 
-[back](../)
+[back](../) | [next](../efi_simple_text_output_protocol/)
