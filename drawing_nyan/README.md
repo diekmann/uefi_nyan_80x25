@@ -327,61 +327,6 @@ Technically, the file `nyan.rs` is still the original nyan cat?
 So, technically, all rights reserved by prguitarman?
 [IANAL](https://en.wikipedia.org/wiki/IANAL).
 
-## Drawing the `NYAN_40X25` Array.
-
-Let'd draw the array!
-Our simple program from the previous chapter is almost ready, [let's adapt it](https://github.com/diekmann/uefi_nyan_80x25/commit/e79bb0f93f2a5cb52ade54a5b478a8a76b95337f#diff-8604ed4b2e74eddb20dce286c605a4cfb983f26421d5efb8c730b277e5dc62c2).
-
-```rust
-#![no_main]
-#![no_std]
-
-use log::info;
-use uefi::prelude::*;
-use uefi::proto::console::text::Color::{Blue,Black};
-
-mod nyan;
-
-const BLOCKELEMENT_FULL_BLOCK: uefi::Char16 = unsafe {uefi::Char16::from_u16_unchecked(0x2588 as u16)};
-
-#[entry]
-fn main() -> Status {
-    uefi::helpers::init().unwrap();
-    let background = Blue;
-    system::with_stdout(|stdout| -> uefi::Result {
-        let must_mode_80x25 = stdout.modes().next().unwrap(); // the first one must be the 80x25 mode.
-        stdout.set_mode(must_mode_80x25)?;
-
-        // Paints the whole background blue. This is even a documented feature of `set_color`+`clear`.
-        stdout.set_color(Black, background)?;
-        stdout.clear()?;
-
-        // Dump all modes.
-        for m in stdout.modes() {
-            info!("supported mode {}: {} {}", m.index(), m.columns(), m.rows());
-        }
-        
-        for color in nyan::NYAN_40X25 {
-            stdout.set_color(color, background)?;
-            let mut s = uefi::CString16::new();
-            s.push(BLOCKELEMENT_FULL_BLOCK);
-            stdout.output_string(&s)?;
-        }
-        Ok(())
-    }).expect("talking to EFI Simple Text Output Protocol went wrong");
-    boot::stall(10_000_000);
-    Status::SUCCESS
-}
-```
-
-```bash
-$ cargo run
-```
-
-![qemu showing two nyan cats](img/twonyan.png)
-
-Wait?
-Why are there two nyan cats?
-Am I drunk?
+We are now ready to draw nyan cat in UCS-2 colors. :cat:
 
 [back](../)

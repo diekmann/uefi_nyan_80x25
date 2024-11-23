@@ -8,6 +8,7 @@ use uefi::proto::console::text::Color::{Blue,Black};
 mod nyan;
 
 const BLOCKELEMENT_FULL_BLOCK: uefi::Char16 = unsafe {uefi::Char16::from_u16_unchecked(0x2588 as u16)};
+const NEWLINE: uefi::Char16 = unsafe { uefi::Char16::from_u16_unchecked(b'\n' as u16) };
 
 #[entry]
 fn main() -> Status {
@@ -26,10 +27,13 @@ fn main() -> Status {
             info!("supported mode {}: {} {}", m.index(), m.columns(), m.rows());
         }
         
-        for color in nyan::NYAN_40X25 {
-            stdout.set_color(color, background)?;
+        for (i, color) in nyan::NYAN_40X25.iter().enumerate() {
+            stdout.set_color(*color, background)?;
             let mut s = uefi::CString16::new();
             s.push(BLOCKELEMENT_FULL_BLOCK);
+            if i%40 == 0 {
+                s.push(NEWLINE);
+            }
             stdout.output_string(&s)?;
         }
         Ok(())
