@@ -44,6 +44,8 @@ fn main() -> Status {
                     s.push(BLOCKELEMENT_FULL_BLOCK);
                     prev_color = color.clone();
                 }
+                stdout.set_color(prev_color, background)?;
+                stdout.output_string(&s)?;
                 boot::stall(70_000);
             }
         }
