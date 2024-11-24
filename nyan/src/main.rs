@@ -28,14 +28,10 @@ fn main() -> Status {
             info!("supported mode {}: {} {}", m.index(), m.columns(), m.rows());
         }
 
-        for (i, color) in nyan::NYAN_40X25.iter().enumerate() {
-            stdout.set_color(*color, background)?;
+        for color in nyan::NYAN_80X25 {
+            stdout.set_color(color, background)?;
             let mut s = uefi::CString16::new();
             s.push(BLOCKELEMENT_FULL_BLOCK);
-            if i % 40 == 0 {
-                s.push(CARRIAGE_RET);
-                s.push(NEWLINE);
-            }
             stdout.output_string(&s)?;
         }
         Ok(())

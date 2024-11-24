@@ -144,7 +144,9 @@ But let me take a note for later:
 The proportions of those two nyan cats look quite good.
 The `BLOCKELEMENT_FULL_BLOCK` is not a perfect square.
 When downsizing nyan cat, we assumed we are drawing it as pixels.
-But `BLOCKELEMENT_FULL_BLOCK` **TODO**
+But `BLOCKELEMENT_FULL_BLOCK` **TODO** 8x19 on qemu or 16x31 on my Thinkpad.
+For simplicity, let's assume the ratio is 1:2.
+**TODO** scale original image, without preserving aspect ratio to 80x25! 80x49 would be preserving aspect ratio.
 Start over.
 Can do animation while at it.
 
