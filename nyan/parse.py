@@ -27,4 +27,5 @@ translate = {
     'ffffff': 'White'
 }
 
-print(", ".join([translate[rgb] for rgb in html]))
+frame_num = sys.argv[1][len('frame'):-len('.html')]
+print(f'pub const NYAN_80X25_{frame_num}: [Color; 80*25] = [' + ', '.join([translate[rgb] for rgb in html]) + '];\n')

@@ -28,11 +28,17 @@ fn main() -> Status {
             info!("supported mode {}: {} {}", m.index(), m.columns(), m.rows());
         }
 
-        for color in nyan::NYAN_80X25 {
-            stdout.set_color(color, background)?;
-            let mut s = uefi::CString16::new();
-            s.push(BLOCKELEMENT_FULL_BLOCK);
-            stdout.output_string(&s)?;
+        for _ in 0..100 {
+            for frame in [nyan::NYAN_80X25_01, nyan::NYAN_80X25_02, nyan::NYAN_80X25_03, nyan::NYAN_80X25_04, nyan::NYAN_80X25_05, nyan::NYAN_80X25_06, nyan::NYAN_80X25_07, nyan::NYAN_80X25_08, nyan::NYAN_80X25_09, nyan::NYAN_80X25_10, nyan::NYAN_80X25_11, nyan::NYAN_80X25_12] {
+                stdout.clear()?;
+                for color in frame[0 .. frame.len()-1].iter() {
+                    stdout.set_color(*color, background)?;
+                    let mut s = uefi::CString16::new();
+                    s.push(BLOCKELEMENT_FULL_BLOCK);
+                    stdout.output_string(&s)?;
+                }
+                boot::stall(70_000);
+            }
         }
         Ok(())
     })
