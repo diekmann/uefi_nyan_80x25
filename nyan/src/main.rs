@@ -31,11 +31,17 @@ fn main() -> Status {
         for _ in 0..100 {
             for frame in [nyan::NYAN_80X25_01, nyan::NYAN_80X25_02, nyan::NYAN_80X25_03, nyan::NYAN_80X25_04, nyan::NYAN_80X25_05, nyan::NYAN_80X25_06, nyan::NYAN_80X25_07, nyan::NYAN_80X25_08, nyan::NYAN_80X25_09, nyan::NYAN_80X25_10, nyan::NYAN_80X25_11, nyan::NYAN_80X25_12] {
                 stdout.clear()?;
+                let mut s = uefi::CString16::new();
+                let mut prev_color = frame[0];
+                stdout.set_color(prev_color, background)?;
                 for color in frame[0 .. frame.len()-1].iter() {
-                    stdout.set_color(*color, background)?;
-                    let mut s = uefi::CString16::new();
+                    if (prev_color as usize) != (*color as usize) {
+                        stdout.set_color(prev_color, background)?;
+                        stdout.output_string(&s)?;
+                        s = uefi::CString16::new();
+                    }
                     s.push(BLOCKELEMENT_FULL_BLOCK);
-                    stdout.output_string(&s)?;
+                    prev_color = color.clone();
                 }
                 boot::stall(70_000);
             }
