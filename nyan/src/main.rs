@@ -28,9 +28,10 @@ fn main() -> Status {
             info!("supported mode {}: {} {}", m.index(), m.columns(), m.rows());
         }
 
+        stdout.clear()?;
         for _ in 0..100 {
             for frame in [nyan::NYAN_80X25_01, nyan::NYAN_80X25_02, nyan::NYAN_80X25_03, nyan::NYAN_80X25_04, nyan::NYAN_80X25_05, nyan::NYAN_80X25_06, nyan::NYAN_80X25_07, nyan::NYAN_80X25_08, nyan::NYAN_80X25_09, nyan::NYAN_80X25_10, nyan::NYAN_80X25_11, nyan::NYAN_80X25_12] {
-                stdout.clear()?;
+                stdout.set_cursor_position(0, 0)?;
                 let mut s = uefi::CString16::new();
                 let mut prev_color = frame[0];
                 stdout.set_color(prev_color, background)?;
