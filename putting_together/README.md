@@ -138,7 +138,9 @@ Nice!!
 
 :tada: :smile_cat: :confetti_ball: :confetti_ball: :smile_cat: :tada:
 
-**TODO** hardware
+![nyan cat booting on my X260](img/longcatnyan_x260.jpg)
+
+Meow!
 
 
 ## Drawing as `NYAN_80X25` Array
