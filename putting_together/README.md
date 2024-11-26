@@ -157,7 +157,7 @@ We accidentally built longcat.
 
 The reason for longnyancat is that `BLOCKELEMENT_FULL_BLOCK` is not a perfect square.
 
-**TODO** image
+![Annotated photo of nyan cat on my X260 showing the size of a BLOCKELEMENT_FULL_BLOCK being 16x31](img/x260_16x31.jpg)
 
 When downsizing nyan cat, we assumed we are drawing him as perfect square pixels.
 I.e., we assumed `BLOCKELEMENT_FULL_BLOCK` is a perfect square with an aspect ratio of 1x1.
