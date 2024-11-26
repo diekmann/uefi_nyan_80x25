@@ -182,4 +182,7 @@ And while I'm at it, let's do everything twelve times, once per animation frame,
 
 Okay, [here is the `main.rs`](https://github.com/diekmann/uefi_nyan_80x25/blob/fe922824ca61677c77cfa7314dc21c5e9fba2350/nyan/src/main.rs).
 
+<!-- Thanks ezgif.com for converting to this small gif. -->
+![Nyancat booted with animation loop on my X260](img/nyanloop.gif)
+
 [back](../)
