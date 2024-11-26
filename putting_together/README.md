@@ -140,6 +140,11 @@ Nice!!
 
 ![nyan cat booting on my X260](img/longcatnyan_x260.jpg)
 
+
+<!-- img/nyanboot.mp4 -->
+<video src="https://github.com/user-attachments/assets/f370eeb1-6ff1-470f-be6a-51b20ed963f7" controls>
+</video>
+
 Meow!
 
 
