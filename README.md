@@ -1,7 +1,29 @@
-# The Making of UEFI NYAN 20x24
+# The Making of UEFI NYAN 80x25
+
+Booting directly into nyan cat.
+
+This repository contains the story how nayn cat was ported to the EFI Simple Text Output Protocol.
+Nyan cat is now an UEFI application.
+You can directly boot into nyan cat.
+Windows 10 support is running out?
+Use nyan cat as your new OS!
+Linux is too complicated?
+Use nyan cat as your new OS!
+BSDs are too esoteric?
+Use nyan cat as your new OS!
+macOS does not natively run on ThinkPads?
+Use nyan cat as your new OS!
 
 
 ![Nyancat booted with via UEFI my X260](putting_together/img/nyanrainbowloop.gif)
+
+## List of Features
+
+* It displays nyan cat.
+
+That's it.
+
+## How UEFI NYAN 80x25 was built
 
 :crab: :cat: :crab:
 
