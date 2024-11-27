@@ -1,7 +1,7 @@
 # The Making of UEFI NYAN 20x24
 
 
-![Nyancat booted with via UEFI my X260](putting_together/img/nyanloop.gif)
+![Nyancat booted with via UEFI my X260](putting_together/img/nyanrainbowloop.gif)
 
 :crab: :cat: :crab:
 
@@ -22,3 +22,7 @@ $ sudo mkdir /boot/efi/EFI/nyan/
 $ sudo cp target/x86_64-unknown-uefi/release/nyan.efi /boot/efi/EFI/nyan/bootx64.efi
 $ sudo efibootmgr --create --disk /dev/sda --part 1 --label "nyan" --loader \\EFI\\nyan\\bootx64.efi 
 ```
+
+Then set `nyan` as the first boot entry in your firmware setup.
+
+![ThinkPad BIOS Setup, setting nyan as first boot entry](putting_together/img/bootorder.jpg)

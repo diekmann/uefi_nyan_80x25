@@ -182,7 +182,15 @@ And while I'm at it, let's do everything twelve times, once per animation frame,
 
 Okay, [here is the `main.rs`](https://github.com/diekmann/uefi_nyan_80x25/blob/fe922824ca61677c77cfa7314dc21c5e9fba2350/nyan/src/main.rs).
 
+**TODO: inline final code**
+
 <!-- Thanks ezgif.com for converting to this small gif. -->
 ![Nyancat booted with animation loop on my X260](img/nyanloop.gif)
+
+Okay, "where is the rainbow?" you ask?
+Fine, let me start over the Gimp journey again. :unamused:
+Maybe I can also optimize the colors and specific frames a bit.
+
+![Nyancat with rainbow booted with animation loop on my X260](img/nyanrainbowloop.gif)
 
 [back](../)
