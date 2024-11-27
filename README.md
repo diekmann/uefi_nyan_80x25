@@ -26,3 +26,11 @@ $ sudo efibootmgr --create --disk /dev/sda --part 1 --label "nyan" --loader \\EF
 Then set `nyan` as the first boot entry in your firmware setup.
 
 ![ThinkPad BIOS Setup, setting nyan as first boot entry](putting_together/img/bootorder.jpg)
+
+Boot directly into nyan cat.
+
+<!-- putting_together/img/nyanrainbowboot.mp4 -->
+<video src="https://github.com/user-attachments/assets/ec1cef35-ca0b-4458-9f66-3592e0796aed" controls>
+</video>
+
+
