@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""usage: for FRAME in *.html; do ./parse.py "$FRAME" >> src/nyan.rs; done"""
 
 import re
 import sys
@@ -23,8 +24,15 @@ translate = {
     '999999': 'LightGray',
     'ffcc99': 'Brown',
     'ff9999': 'LightRed',
-    'ff3399': 'Magenta',
-    'ffffff': 'White'
+    'ff3399': 'Red',
+    'ffffff': 'White',
+    # rainbow:
+    'e7080e': 'LightRed',
+    'e7910e': 'Brown', # organge :(
+    'e7ed0e': 'Yellow',
+    '2fed0e': 'LightGreen',
+    '0291f4': 'LightCyan',
+    '5d36f4': 'LightBlue',
 }
 
 frame_num = sys.argv[1][len('frame'):-len('.html')]
