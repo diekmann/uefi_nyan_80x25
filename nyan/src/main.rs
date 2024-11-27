@@ -7,9 +7,7 @@ use uefi::proto::console::text::Color::{Black, Blue};
 
 mod nyan;
 
-const BLOCKELEMENT_FULL_BLOCK: uefi::Char16 = unsafe { uefi::Char16::from_u16_unchecked(0x2588 as u16) };
-const CARRIAGE_RET: uefi::Char16 = unsafe { uefi::Char16::from_u16_unchecked(b'\r' as u16) };
-const NEWLINE: uefi::Char16 = unsafe { uefi::Char16::from_u16_unchecked(b'\n' as u16) };
+const BLOCKELEMENT_FULL_BLOCK: uefi::Char16 = unsafe { uefi::Char16::from_u16_unchecked(0x2588_u16) };
 
 #[entry]
 fn main() -> Status {
@@ -42,7 +40,7 @@ fn main() -> Status {
                         s = uefi::CString16::new();
                     }
                     s.push(BLOCKELEMENT_FULL_BLOCK);
-                    prev_color = color.clone();
+                    prev_color = *color;
                 }
                 stdout.set_color(prev_color, background)?;
                 stdout.output_string(&s)?;
