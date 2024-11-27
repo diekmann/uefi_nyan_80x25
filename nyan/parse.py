@@ -24,7 +24,7 @@ translate = {
     '999999': 'LightGray',
     'ffcc99': 'Brown',
     'ff9999': 'LightRed',
-    'ff3399': 'Magenta',
+    'ff3399': 'Red',
     'ffffff': 'White',
     # rainbow:
     'e7080e': 'LightRed',
