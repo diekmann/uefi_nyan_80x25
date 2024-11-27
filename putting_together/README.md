@@ -181,8 +181,66 @@ Time to start over and do the whole thing again.
 And while I'm at it, let's do everything twelve times, once per animation frame, so nyan cat is moving.
 
 Okay, [here is the `main.rs`](https://github.com/diekmann/uefi_nyan_80x25/blob/fe922824ca61677c77cfa7314dc21c5e9fba2350/nyan/src/main.rs).
+I tried to optimize the drawing as much as possible by calling the slow `stdout.output_string` as few times as possible.
+I also prevent screen flickering by not calling `stdout.clear` during the animation.
 
-**TODO: inline final code**
+```rust
+#![no_main]
+#![no_std]
+
+use log::info;
+use uefi::prelude::*;
+use uefi::proto::console::text::Color::{Black, Blue};
+
+mod nyan;
+
+const BLOCKELEMENT_FULL_BLOCK: uefi::Char16 = unsafe { uefi::Char16::from_u16_unchecked(0x2588_u16) };
+
+#[entry]
+fn main() -> Status {
+    uefi::helpers::init().unwrap();
+    let background = Blue;
+    system::with_stdout(|stdout| -> uefi::Result {
+        let must_mode_80x25 = stdout.modes().next().unwrap(); // the first one must be the 80x25 mode.
+        stdout.set_mode(must_mode_80x25)?;
+
+        // Paints the whole background blue. This is even a documented feature of `set_color`+`clear`.
+        stdout.set_color(Black, background)?;
+        stdout.clear()?;
+
+        // Dump all modes.
+        for m in stdout.modes() {
+            info!("supported mode {}: {} {}", m.index(), m.columns(), m.rows());
+        }
+
+        stdout.clear()?;
+        for _ in 0..100 {
+            for frame in [nyan::NYAN_80X25_01, nyan::NYAN_80X25_02, nyan::NYAN_80X25_03, nyan::NYAN_80X25_04, nyan::NYAN_80X25_05, nyan::NYAN_80X25_06, nyan::NYAN_80X25_07, nyan::NYAN_80X25_08, nyan::NYAN_80X25_09, nyan::NYAN_80X25_10, nyan::NYAN_80X25_11, nyan::NYAN_80X25_12] {
+                stdout.set_cursor_position(0, 0)?;
+                let mut s = uefi::CString16::new();
+                let mut prev_color = frame[0];
+                stdout.set_color(prev_color, background)?;
+                for color in frame[0 .. frame.len()-1].iter() {
+                    if (prev_color as usize) != (*color as usize) {
+                        stdout.set_color(prev_color, background)?;
+                        stdout.output_string(&s)?;
+                        s = uefi::CString16::new();
+                    }
+                    s.push(BLOCKELEMENT_FULL_BLOCK);
+                    prev_color = *color;
+                }
+                stdout.set_color(prev_color, background)?;
+                stdout.output_string(&s)?;
+                boot::stall(70_000);
+            }
+        }
+        Ok(())
+    })
+    .expect("talking to EFI Simple Text Output Protocol went wrong");
+    boot::stall(10_000_000);
+    Status::SUCCESS
+}
+```
 
 <!-- Thanks ezgif.com for converting to this small gif. -->
 ![Nyancat booted with animation loop on my X260](img/nyanloop.gif)
