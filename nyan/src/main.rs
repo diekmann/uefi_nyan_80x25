@@ -27,7 +27,7 @@ fn main() -> Status {
         }
 
         stdout.clear()?;
-        for _ in 0..100 {
+        loop {
             for frame in [nyan::NYAN_80X25_01, nyan::NYAN_80X25_02, nyan::NYAN_80X25_03, nyan::NYAN_80X25_04, nyan::NYAN_80X25_05, nyan::NYAN_80X25_06, nyan::NYAN_80X25_07, nyan::NYAN_80X25_08, nyan::NYAN_80X25_09, nyan::NYAN_80X25_10, nyan::NYAN_80X25_11, nyan::NYAN_80X25_12] {
                 stdout.set_cursor_position(0, 0)?;
                 let mut s = uefi::CString16::new();
@@ -47,7 +47,6 @@ fn main() -> Status {
                 boot::stall(70_000);
             }
         }
-        Ok(())
     })
     .expect("talking to EFI Simple Text Output Protocol went wrong");
     boot::stall(10_000_000);
