@@ -1,3 +1,7 @@
+# UEFI NYAN 80x25
+
+![Four Thinkpads in a kids playpen. All Thinkpads are booted to UEFI Nyan Cat](laufstall.gif)
+
 # The Making of UEFI NYAN 80x25
 
 Booting directly into nyan cat.
