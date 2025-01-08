@@ -1,10 +1,10 @@
 # UEFI NYAN 80x25
 
+Booting directly into nyan cat.
+
 ![Four Thinkpads in a kids playpen. All Thinkpads are booted to UEFI Nyan Cat](laufstall.gif)
 
 # The Making of UEFI NYAN 80x25
-
-Booting directly into nyan cat.
 
 This repository contains the story how nayn cat was ported to the EFI Simple Text Output Protocol.
 Nyan cat is now an UEFI application.
