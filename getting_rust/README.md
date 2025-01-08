@@ -28,7 +28,7 @@ I know that people love writing things from scratch and complain about the exist
 Just like I never met a handyman who did not complain about the previous handyman and suggested to tear everything out and do it again.
 But this is rarely the right choice.
 Usually, working with existing systems is the more economic option.
-And let's be honest, when was a rewrite ever smooth?
+And while we're being honest, when was a rewrite ever smooth?
 The existing system probably already solves many problems and corner cases and is often well-tested.
 Maybe not in terms of unit tests, but at least in production.
 Renovating existing code instead of rewriting is often the best option.
@@ -42,7 +42,7 @@ People even misquote Rob Pike as describing Golang as a [dumb language for dumb 
 But this quote is completely out of context.
 Yes, Golang is a simple language by design.
 But following the [Chomsky hierarchy](https://en.wikipedia.org/wiki/Chomsky_hierarchy) morally —not verbatim, because everything is Turing-complete—, we see that writing code gets harder and harder the less expressive the language is.
-So, the dumber tha language, the more effort needs to be put into writing in that language.
+So, the dumber the language, the more effort needs to be put into writing in that language.
 When combining this constraint with idiomatic Golang readability rules, writing Goalng such that the code focuses on simplicity is really hard.
 But this pays off when having to read the code again or working with other people's existing code: It's super easy to get started.
 And usually, coding work is constrained to a local context.
@@ -62,7 +62,7 @@ Okay, that Haskell example and word is made up (it won't compile) and slightly e
 
 Haskell is a very nice language and writing Haskell is fun.
 
-And let's be honest: Golang is not a nice language and writing Golang is often not fun.
+To be honest: Golang is not a nice language and writing Golang is often not fun.
 But
 
   * Getting stuff done in Golang is fun.
