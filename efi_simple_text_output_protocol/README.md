@@ -70,14 +70,14 @@ pub unsafe fn init() {
 
 So this is how this generic `log` crate gets initialized to talk to the EFI Simple Text Output Protocol.
 And `system::with_stdout` is exactly what we are looking for.
-It's documentation is
+Its documentation is
 
 ```rust
 /// Call `f` with the [`Output`] protocol attached to stdout.
 ```
 
 and the implementation does exactly what we thought it should do:
-Get the output protocol pointer fro the efi system table and wrap it in a safe way into the `stdout` variable:
+Get the output protocol pointer from the EFI system table and wrap it in a safe way into the `stdout` variable:
 
 ```rust
 /// Call `f` with the [`Output`] protocol attached to stdout.
@@ -322,7 +322,7 @@ Some observations
 
 * The colors do look nice.
 * The blue background looks nice, which is perfect for nyan cat.
-* There are not many colors, which is good enough for nyan cat.
+* There are not many colors, but it's good enough for nyan cat.
 * UEFI really insists that only the first eight colors can be used as background colors.
 
 How does this look on real hardware?
